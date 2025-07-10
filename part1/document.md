@@ -20,11 +20,11 @@ This project demonstrates a simplified ordering system using clean architecture 
 ## 📁 Project Structure
 
 AdventureWorks/
-├── AdventureWorks.Api/ # API Layer (Controllers, Dtos, Validators, AutoMapper)
-├── AdventureWorks.Service/ # Application/Business Logic Layer
-├── AdventureWorks.Repository/ # Repository & Unit of Work
-├── AdventureWorks.Database/ # EF Core Entities (e.g. Product, Order, etc.)
-├── AdventureWorks.Domain/ # Business Models (pure logic, no EF Core)
+├── AdventureWorks.Api/ 
+├── AdventureWorks.Service/
+├── AdventureWorks.Repository/ 
+├── AdventureWorks.Database/ 
+├── AdventureWorks.Domain/ 
 
 ### 🔹 Key Folders Explanation
 
