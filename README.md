@@ -15,9 +15,6 @@ This repository contains my solution to the ASP.NET Developer Interview Test. Th
 - **Logic**: Calculates average quantity sold in the last 3 months per product. Triggers alert if:
 current_stock < 2 * avg_sold_last_3_months
 
-markdown
-Sao chép
-Chỉnh sửa
 - **Technologies**: EF Core, LINQ, DTO, Exception Handling, HTTP Status Codes.
 
 ### 2. Monthly Report API
