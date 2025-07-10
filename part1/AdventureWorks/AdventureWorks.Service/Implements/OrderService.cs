@@ -1,5 +1,4 @@
-﻿using AdventureWorks.Domain;
-using AdventureWorks.Repository.UnitOfWork;
+﻿using AdventureWorks.Repository.UnitOfWork;
 using AdventureWorks.Service.Exceptions;
 
 namespace AdventureWorks.Service.Implements;
@@ -46,10 +45,10 @@ public class OrderService(IOrderRepository orderRepository,
                     SalesOrderId = header.SalesOrderId,
                     ProductId = item.ProductId,
                     OrderQty = item.Quantity,
-                    SpecialOfferId = item.SpecialOfferId, 
-                    UnitPrice = 100m,   
-                    UnitPriceDiscount = 0m, 
-                    LineTotal = 100m * item.Quantity, 
+                    SpecialOfferId = item.SpecialOfferId,
+                    UnitPrice = 100m,
+                    UnitPriceDiscount = 0m,
+                    LineTotal = 100m * item.Quantity,
 
                     ModifiedDate = DateTime.UtcNow,
                     Rowguid = Guid.NewGuid()
@@ -92,8 +91,8 @@ public class OrderService(IOrderRepository orderRepository,
         var existingPairs = await productRepository.GetExistingOfferProductPairsAsync(requestedPairs);
 
         var invalidPairs = requestedPairs
-        .Except(existingPairs)
-        .ToList();
+                                .Except(existingPairs)
+                                .ToList();
 
         if (invalidPairs.Count != 0)
         {

@@ -5,8 +5,10 @@ public class ProductRepository(AdventureWorksContext context) : IProductReposito
     private readonly AdventureWorksContext _context = context;
     public async Task<List<LowStockAlert>> GetLowStockProductsAsync()
     {
-        var fakeNow = new DateTime(2014, 7, 1);
-        var threeMonthsAgo = fakeNow.AddMonths(-3);
+        // Use a fixed "now" date for testing purposes (e.g., mock data or predictable results in unit tests)
+        // In production, you should use: var now = DateTime.UtcNow;
+        var now = new DateTime(2014, 7, 1);
+        var threeMonthsAgo = now.AddMonths(-3);
 
         // Step 1: Calculate the average sales volume in 3 months
         var avgSoldQuery = _context.SalesOrderDetails

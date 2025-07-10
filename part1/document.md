@@ -1,56 +1,110 @@
-# .NET Project Conventions (3-Layer Architecture with EF Core and SQL Server)
+# Adventure Works
 
-## 1. Project Structure
+## Technologies
+- Backend: ASP.NET CORE API 8, C#, Entity Framework Core, LINQ, DI, AutoMapper, Fluent Validation.
+- Database: SQL SERVER.
+- Tool: Git, Github, Postman.
+
+## IDE
+Visual Studio 2022, Sql Server 2022, Visual Studio Code.
+
+This project demonstrates a simplified ordering system using clean architecture principles, based on the AdventureWorks sample database. It includes:
+
+- Layered architecture (API, Application, Domain, Repository, Database)
+- FluentValidation for input validation
+- Repository + Unit of Work pattern
+- Low stock alert feature based on past sales data
+
+---
+
+## 📁 Project Structure
+
+AdventureWorks/
+├── AdventureWorks.Api/ # API Layer (Controllers, Dtos, Validators, AutoMapper)
+├── AdventureWorks.Service/ # Application/Business Logic Layer
+├── AdventureWorks.Repository/ # Repository & Unit of Work
+├── AdventureWorks.Database/ # EF Core Entities (e.g. Product, Order, etc.)
+├── AdventureWorks.Domain/ # Business Models (pure logic, no EF Core)
+
+### 🔹 Key Folders Explanation
+
+| Folder                      | Description                                                                 |
+|----------------------------|-----------------------------------------------------------------------------|
+| `AdventureWorks.Api`       | Contains controllers, DTOs, AutoMapper configs, and input validators        |
+| `AdventureWorks.Service`   | Core business logic, validation services, and application use cases         |
+| `AdventureWorks.Repository`| Interfaces + EF Core implementation + Unit of Work for managing transactions|
+| `AdventureWorks.Database`  | Contains entity models directly mapped to the AdventureWorks database       |
+| `AdventureWorks.Domain`    | Contains domain models (e.g. Order, LowStockAlert) with no dependencies     |
+
+## ⚙️ Technical Architecture & Practices
+
+### 🧱 Centralized Exception Handling
+- A custom **middleware** is used to globally handle exceptions across the application.
+- This avoids repetitive `try-catch` blocks inside controllers or services.
+- It catches unexpected errors and formats them into consistent JSON error responses.
+- Example responses:
+  - `400 Bad Request` — validation or client-side errors
+  - `404 Not Found` — missing resources
+  - `500 Internal Server Error` — unhandled server exceptions
+
+### ✅ Request Validation with FluentValidation
+- The API uses the `[ApiController]` attribute for automatic model validation.
+- **FluentValidation** is integrated to validate DTOs with custom business rules.
+- Invalid models are automatically blocked at the controller level, returning a structured `400` error.
+
+```csharp
+[HttpPost]
+public async Task<IActionResult> CreateOrder([FromBody] OrderDto dto)
+{
+    // Validation happens automatically
+}
 ```
-/GOCAP
-|-- /AdventureWorks.Api
-|-- /AdventureWorks.Service 
-|-- /AdventureWorks.Domain 
-|-- /AdventureWorks.Repository 
-|-- /AdventureWorks.Database 
+
+### 🔄 AutoMapper Usage
+- **AutoMapper** is used to transform data between layers:
+  - DTO ⇄ Domain Model
+  - Domain ⇄ EF Core Entity
+- This minimizes repetitive mapping code and makes the logic clean and maintainable.
+
+```csharp
+CreateMap<OrderDto, Order>();
 ```
 
-## 2. Naming Conventions
-### 2.1 General Naming
-- Use **PascalCase** for class names, method names, and properties.
-- Use **camelCase** for local variables and method parameters.
+### 💾 Transaction Management (Unit of Work)
+- Implements the **Unit of Work** pattern to group multiple database actions into a single transaction.
+- All changes are committed together with `CommitAsync()` and rolled back on failure.
+- Ensures data consistency and atomic operations.
 
-### 2.3 Interface Naming
-- Prefix interfaces with `I` (e.g., `IUserRepository`).
-- Repository interfaces should follow `IEntityRepository<T>` convention.
+```csharp
+await unitOfWork.BeginTransactionAsync();
+// do multiple operations
+await unitOfWork.CommitTransactionAsync();
+```
 
-### 2.4 Controller Naming
-- Use **plural form** (e.g., `UsersController`, `StoriesController`).
-- Use `Controller` suffix (e.g., `UsersController`).
+### 🔌 Dependency Injection
+- All services, repositories, and validators are registered via **.NET Dependency Injection**.
+- Promotes testability, loose coupling, and single-responsibility principle.
 
-### 2.5 Service Naming
-- Use `Service` suffix (e.g., `UserService`).
-- Use `Manager` if the service performs complex logic (e.g., `StoryManager`).
+```csharp
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddValidatorsFromAssemblyContaining<OrderDtoValidator>();
+```
 
-### 2.6 Dto Naming
-- Use `Dto` suffix (e.g., `UserDto`, `StoryCreationDto`).
+### 📡 RESTful API Standards
+- API responses follow REST conventions with meaningful status codes:
+  - `200 OK` — successful GET or POST operation
+  - `201 Created` — for resource creation
+  - `400 Bad Request` — validation or input error
+  - `404 Not Found` — resource does not exist
+  - `500 Internal Server Error` — unhandled exceptions
 
-### 2.7 Repository Naming
-- Repository implementations should have `Repository` suffix (e.g., `UserRepository`).
+---
 
-## 3. Database Conventions
-### 3.1 Table Naming
-- Use **singular form** (e.g., `Users`, `Stories`).
-
-## 4. Coding Conventions
-### 4.1 Entity Framework Core
-- Use **Fluent API** for configurations instead of attributes.
-- Use `DbSet<T>` for each entity in `DbContext`.
-- Use `AsNoTracking()` for read-only queries.
-- Use **ValueObjects** for reusable domain concepts.
-
-### 4.2 API and Routing
-- Use **RESTful principles**.
-- Use `[controller]s` (e.g., `users`) for base routing.
-- Use **GET, POST, PATCH, PUT, DELETE** methods properly.
-- Use **HttpStatusCode** properly (e.g., `200 OK`, `201 Created`, `400 Bad Request`).
-
-### 4.3 Exception Handling
-- Use a **global exception handler middleware**.
-- Do not expose **stack traces** in production.
-- Use **custom exception classes** for domain-specific errors.
+## ✅ Summary
+This project implements modern .NET best practices for building scalable and maintainable APIs:
+- Clean separation of concerns (API → Domain → Application → Repository)
+- Consistent error handling and validation
+- Automated data mapping with AutoMapper
+- Transactional integrity using Unit of Work
+- Easy to extend and test with built-in DI
