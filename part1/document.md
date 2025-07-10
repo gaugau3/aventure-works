@@ -17,14 +17,14 @@ This project demonstrates a simplified ordering system using clean architecture 
 
 ---
 
-## 📁 Project Structure
-
-AdventureWorks/
-├── AdventureWorks.Api/ 
-├── AdventureWorks.Service/
-├── AdventureWorks.Repository/ 
-├── AdventureWorks.Database/ 
-├── AdventureWorks.Domain/ 
+## Project Structure
+```
+/AdventureWorks
+|-- /AdventureWorks.Api
+|-- /AdventureWorks.Service
+|-- /AdventureWorks.Repository
+|-- /AdventureWorks.Database
+|-- /AdventureWorks.Domain
 
 ### 🔹 Key Folders Explanation
 
